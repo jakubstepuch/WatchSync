@@ -1,0 +1,262 @@
+:root {
+    --background: #121416;
+    --surface: #1c1f22;
+    --text: #f1f0ed;
+    --muted: #989ca1;
+    --accent: #e85b45;
+    --border: #383c40;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+}
+
+/* Główny układ */
+
+.container {
+    width: 100%;
+    max-width: 1250px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 70px 60px 35px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* Nagłówek */
+
+.header {
+    text-align: left;
+    padding-bottom: 75px;
+    border-bottom: 1px solid var(--border);
+}
+
+.header h1 {
+    font-size: clamp(64px, 9vw, 110px);
+    font-weight: 800;
+    letter-spacing: -5px;
+    line-height: 1;
+    margin: 0 0 25px;
+}
+
+.header p {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--muted);
+    margin: 0;
+}
+
+/* Główne sekcje */
+
+.room-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 40px 0;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    min-height: 230px;
+    padding: 20px 50px 30px 0;
+
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+.card + .card {
+    border-left: 1px solid var(--border);
+    padding-left: 55px;
+    padding-right: 0;
+}
+
+/* Numeracja sekcji */
+
+.card::before {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 35px;
+}
+
+.card:first-child::before {
+    content: "01 / NOWA SESJA";
+}
+
+.card:last-child::before {
+    content: "02 / ISTNIEJĄCA SESJA";
+}
+
+/* Teksty */
+
+.card h2 {
+    font-size: 29px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin: 0 0 15px;
+}
+
+.card p {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0 0 25px;
+}
+
+/* Pole kodu pokoju */
+
+.card input {
+    width: 100%;
+    height: 48px;
+    padding: 0 15px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+
+    color: var(--text);
+    font-size: 15px;
+
+    margin-top: auto;
+}
+
+.card input::placeholder {
+    color: #777c82;
+}
+
+.card input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+/* Przyciski */
+
+.card button {
+    width: fit-content;
+    min-width: 190px;
+    height: 48px;
+    padding: 0 28px;
+
+    border: none;
+    border-radius: 2px;
+
+    background: var(--accent);
+    color: #fff;
+
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+
+    cursor: pointer;
+    transition: background 0.2s ease;
+    margin-top: auto;
+}
+
+.card button:hover {
+    background: #c94633;
+}
+
+.card button:focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 3px;
+}
+
+/* Przycisk dołączania */
+
+.card:last-child button {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--text);
+
+    margin-top: 15px;
+}
+
+.card:last-child button:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+/* Stopka */
+
+.footer {
+    border-top: 1px solid var(--border);
+    padding-top: 25px;
+
+    color: #777c82;
+    font-size: 13px;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin-top: auto;
+}
+
+.footer p {
+    margin: 0;
+}
+
+.footer p:last-child {
+    text-align: right;
+}
+
+/* Mniejsze ekrany */
+
+@media (max-width: 800px) {
+
+    .container {
+        padding: 40px 25px 25px;
+    }
+
+    .header {
+        padding-bottom: 45px;
+    }
+
+    .header h1 {
+        font-size: 58px;
+        letter-spacing: -3px;
+    }
+
+    .header p {
+        font-size: 16px;
+    }
+
+    .room-options {
+        grid-template-columns: 1fr;
+        padding: 25px 0;
+    }
+
+    .card {
+        min-height: 240px;
+        padding: 30px 0;
+    }
+
+    .card + .card {
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding: 35px 0;
+    }
+
+    .card::before {
+        margin-bottom: 20px;
+    }
+
+    .footer {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .footer p:last-child {
+        text-align: left;
+    }
+}

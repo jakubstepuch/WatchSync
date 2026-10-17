@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>WatchSync – Wspólne oglądanie filmów</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <header class="header">
+            <h1>WatchSync</h1>
+            <p>Oglądaj materiały wideo synchronicznie ze znajomymi</p>
+        </header>
+
+        <section class="room-options">
+
+            <div class="card">
+                <h2>Utwórz nowy pokój</h2>
+
+                <p>
+                    Rozpocznij sesję i zaproś uczestników
+                </p>
+
+                <button id="createRoomBtn">
+                    Utwórz pokój
+                </button>
+            </div>
+
+            <div class="card">
+                <h2>Dołącz do pokoju</h2>
+
+                <p>
+                    Wpisz kod otrzymany od gospodarza
+                </p>
+
+                <input
+                    type="text"
+                    id="roomCode"
+                    placeholder="Kod pokoju, np. ABC123"
+                    aria-label="Kod pokoju"
+                >
+
+                <button id="joinRoomBtn">
+                    Dołącz
+                </button>
+            </div>
+
+        </section>
+
+        <footer class="footer">
+
+            <p>Pomoc i instrukcje</p>
+
+            <p>
+                Funkcje: synchronizacja odtwarzania •
+                czat • lista uczestników • kontrola gospodarza
+            </p>
+
+        </footer>
+
+    </main>
+
+</body>
+</html>
