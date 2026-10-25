@@ -24,3 +24,9 @@ client/   # interfejs (Kuba)
 server/   # serwer HTTP i WebSocket (Łukasz)
 tests/    # testy
 ```
+
+## Status
+- [x] Etap 1: konfiguracja Node.js, serwer WebSocket, struktura projektu
+- [x] Etap 2: pokoje, użytkownicy, zdarzenia play/pause/seek
+- [ ] Etap 3: późne dołączanie, stan pokoju, uprawnienia
+- [ ] Etap 4: rozłączenia, testy synchronizacji i opóźnień
