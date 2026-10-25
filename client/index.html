@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>WatchSync</title>
+</head>
+<body>
+  <h1>WatchSync</h1>
+  <p id="status">Łączenie...</p>
+  <pre id="messages"></pre>
+
+  <script>
+    const status = document.getElementById("status");
+    const messages = document.getElementById("messages");
+    const socket = new WebSocket(`ws://${location.host}`);
+
+    socket.onopen = () => {
+      status.textContent = "Połączono z WebSocket";
+      socket.send("Test wiadomości");
+    };
+
+    socket.onmessage = (event) => {
+      messages.textContent += event.data + "\n";
+    };
+
+    socket.onerror = () => {
+      status.textContent = "Błąd WebSocket";
+    };
+  </script>
+</body>
+</html>
