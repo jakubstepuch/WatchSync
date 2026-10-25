@@ -1,8 +1,9 @@
 {
   "name": "watchsync",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Synchroniczne odtwarzanie filmów w przeglądarce (Node.js, Express, WebSocket)",
+  "private": true,
+  "main": "server/server.js",
   "directories": {
     "test": "tests"
   },
@@ -11,12 +12,15 @@
     "start": "node server/server.js",
     "dev": "nodemon server/server.js"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jakubstepuch/WatchSync.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["websocket", "nodejs", "video-sync"],
+  "author": "Łukasz, Kuba",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/jakubstepuch/WatchSync/issues"
