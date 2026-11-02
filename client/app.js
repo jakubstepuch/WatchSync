@@ -53,11 +53,11 @@ createRoomBtn.addEventListener("click", showCreateRoom);
 
 backHomeBtn.addEventListener("click", showHome);
 
+// Połączenie z serwerem
+let roomSocket = null;
 
-// Obsługa formularza
-
+// Obsługa formularza tworzenia pokoju
 createRoomForm.addEventListener("submit", function(event) {
-
     event.preventDefault();
 
     const roomName = document.getElementById("roomName").value.trim();
@@ -69,16 +69,34 @@ createRoomForm.addEventListener("submit", function(event) {
         return;
     }
 
-    createRoomStatus.textContent =
-        "Formularz jest gotowy. Tworzenie pokoju będzie dostępne po połączeniu z serwerem.";
+    createRoomStatus.textContent = "Łączenie z serwerem...";
 
-    console.log("Dane nowego pokoju:", {
-        roomName,
-        videoUrl,
-        displayName
+    roomSocket = connectToRoom(roomName, displayName, function(message) {
+
+        if (message.type === "joined") {
+            document.getElementById("roomNameDisplay").textContent = roomName;
+            document.getElementById("roomCodeDisplay").textContent = message.room;
+
+            const videoPlayer = document.getElementById("videoPlayer");
+            videoPlayer.src = videoUrl;
+            videoPlayer.load();
+          
+            showRoomPreview();
+
+            leaveRoomBtn.textContent = "Opuść pokój";
+            document.getElementById("syncStatus").textContent = "Połączono z serwerem";
+        }
+
+        if (message.type === "error") {
+            createRoomStatus.textContent = message.message;
+        }
     });
 
+    roomSocket.addEventListener("error", function() {
+        createRoomStatus.textContent = "Błąd połączenia z serwerem.";
+    });
 });
+
 // Widok dołączania do pokoju
 
 const joinRoomView = document.getElementById("joinRoomView");
@@ -135,10 +153,8 @@ joinRoomBtn.addEventListener("click", showJoinRoom);
 backFromJoinBtn.addEventListener("click", backFromJoin);
 
 
-// Obsługa formularza dołączania
-
+// Dołączanie do pokoju
 joinRoomForm.addEventListener("submit", function(event) {
-
     event.preventDefault();
 
     const roomCode = document.getElementById("joinRoomCode").value.trim();
@@ -149,16 +165,32 @@ joinRoomForm.addEventListener("submit", function(event) {
         return;
     }
 
-    joinRoomStatus.textContent =
-        "Formularz jest gotowy. Dołączanie będzie dostępne po połączeniu z serwerem.";
+    joinRoomStatus.textContent = "Łączenie z pokojem...";
 
-    console.log("Dane dołączania:", {
-        roomCode,
-        displayName
+    roomSocket = connectToRoom(roomCode, displayName, function(message) {
+
+        if (message.type === "joined") {
+            document.getElementById("roomNameDisplay").textContent = message.room;
+            document.getElementById("roomCodeDisplay").textContent = message.room;
+
+            showRoomPreview();
+
+            leaveRoomBtn.textContent = "Opuść pokój";
+            document.getElementById("syncStatus").textContent = "Połączono z serwerem";
+
+            console.log("Uczestnicy pokoju:", message.users);
+        }
+
+        if (message.type === "error") {
+            joinRoomStatus.textContent = message.message;
+        }
     });
 
+    roomSocket.addEventListener("error", function() {
+        joinRoomStatus.textContent = "Błąd połączenia z serwerem.";
+    });
 });
-// 
+
 // --PODGLĄD INTERFEJSU POKOJU--
 // 
 
@@ -188,6 +220,10 @@ function showRoomPreview() {
 
 function closeRoomPreview() {
 
+    if (roomSocket) {
+    roomSocket.close();
+    roomSocket = null;
+}
     document.querySelector(".container").classList.remove("room-layout");
     
     roomView.hidden = true;
@@ -206,3 +242,29 @@ if (params.get("preview") === "room") {
     showRoomPreview();
 }
 
+// --- OBSŁUGA ZDARZEŃ ODTWARZACZA HTML5 ---
+
+const player = document.getElementById("videoPlayer");
+const lastActionElement = document.getElementById("lastAction");
+
+// Wyświetlanie ostatniej akcji użytkownika
+function showPlayerAction(message) {
+    lastActionElement.textContent = message;
+    console.log("Odtwarzacz:", message);
+}
+
+// Rozpoczęcie odtwarzania
+player.addEventListener("play", function() {
+    showPlayerAction("Rozpoczęto odtwarzanie");
+});
+
+// Zatrzymanie odtwarzania
+player.addEventListener("pause", function() {
+    showPlayerAction("Wstrzymano odtwarzanie");
+});
+
+// Przewijanie filmu
+player.addEventListener("seeked", function() {
+    const time = player.currentTime.toFixed(1);
+    showPlayerAction(`Przewinięto do ${time} s`);
+});
