@@ -73,6 +73,8 @@ createRoomForm.addEventListener("submit", function(event) {
 
     roomSocket = connectToRoom(roomName, displayName, function(message) {
 
+    handleRoomMessage(message);
+
         if (message.type === "joined") {
             document.getElementById("roomNameDisplay").textContent = roomName;
             document.getElementById("roomCodeDisplay").textContent = message.room;
@@ -169,6 +171,8 @@ joinRoomForm.addEventListener("submit", function(event) {
 
     roomSocket = connectToRoom(roomCode, displayName, function(message) {
 
+    handleRoomMessage(message);
+
         if (message.type === "joined") {
             document.getElementById("roomNameDisplay").textContent = message.room;
             document.getElementById("roomCodeDisplay").textContent = message.room;
@@ -255,12 +259,43 @@ function showPlayerAction(message) {
 
 // Rozpoczęcie odtwarzania
 player.addEventListener("play", function() {
-    showPlayerAction("Rozpoczęto odtwarzanie");
-});
 
-// Zatrzymanie odtwarzania
+    showPlayerAction("Rozpoczęto odtwarzanie");
+
+    // Nie odsyłamy do serwera zdarzenia wywołanego synchronizacją
+    if (suppressNextPlay) {
+        suppressNextPlay = false;
+        return;
+    }
+
+    if (roomSocket && roomSocket.readyState === WebSocket.OPEN) {
+
+        roomSocket.send(JSON.stringify({
+            type: "play",
+            time: player.currentTime
+        }));
+
+        console.log("Wysłano PLAY:", player.currentTime);
+    }
+});
 player.addEventListener("pause", function() {
+
     showPlayerAction("Wstrzymano odtwarzanie");
+
+    if (suppressNextPause) {
+        suppressNextPause = false;
+        return;
+    }
+
+    if (roomSocket && roomSocket.readyState === WebSocket.OPEN) {
+
+        roomSocket.send(JSON.stringify({
+            type: "pause",
+            time: player.currentTime
+        }));
+
+        console.log("Wysłano PAUSE:", player.currentTime);
+    }
 });
 
 // Przewijanie filmu
@@ -268,3 +303,56 @@ player.addEventListener("seeked", function() {
     const time = player.currentTime.toFixed(1);
     showPlayerAction(`Przewinięto do ${time} s`);
 });
+
+// --- SYNCHRONIZACJA PLAY PRZEZ WEBSOCKET ---
+
+let suppressNextPlay = false;
+let suppressNextPause = false;
+
+// Odbieranie aktualizacji stanu z serwera
+function handleRoomMessage(message) {
+
+    // Synchronizacja zatrzymania odtwarzania
+if (message.type === "state" && message.playing === false) {
+
+    if (!player.currentSrc) return;
+
+    const time = Number(message.time);
+
+    if (Number.isFinite(time) && Math.abs(player.currentTime - time) > 0.5) {
+        player.currentTime = time;
+    }
+
+    if (!player.paused) {
+        suppressNextPause = true;
+        player.pause();
+    }
+
+    return;
+}
+    if (message.type !== "state" || message.playing !== true) {
+        return;
+    }
+
+    if (!player.currentSrc) {
+        console.log("Nie załadowano filmu do odtwarzacza.");
+        return;
+    }
+
+    // Ustawienie pozycji otrzymanej z serwera
+    const time = Number(message.time);
+
+    if (Number.isFinite(time) && Math.abs(player.currentTime - time) > 0.5) {
+        player.currentTime = time;
+    }
+
+    // Uruchomienie odtwarzania bez ponownego wysyłania PLAY
+    if (player.paused) {
+        suppressNextPlay = true;
+
+        player.play().catch(function(error) {
+            suppressNextPlay = false;
+            console.error("Nie udało się rozpocząć odtwarzania:", error);
+        });
+    }
+}
