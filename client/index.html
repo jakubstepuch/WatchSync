@@ -84,13 +84,24 @@
                 required
             >
 
-            <label for="videoUrl">Adres URL materiału wideo</label>
+            <label for="roomCodeInput">Kod pokoju (opcjonalnie)</label>
+            <input
+                type="text"
+                id="roomCodeInput"
+                name="roomCodeInput"
+                placeholder="Zostaw puste, a kod wygeneruje się sam"
+                maxlength="32"
+                pattern="[A-Za-z0-9_\-]{3,32}"
+                title="3-32 znaki: litery, cyfry, - i _"
+                autocomplete="off"
+            >
+
+            <label for="videoUrl">Adres URL materiału wideo (opcjonalnie)</label>
             <input
                 type="url"
                 id="videoUrl"
                 name="videoUrl"
                 placeholder="https://example.com/video.mp4"
-                required
             >
 
             <label for="displayName">Nazwa użytkownika</label>
@@ -230,13 +241,78 @@
                     Twoja przeglądarka nie obsługuje HTML5 Video.
                 </video>
 
+                <video
+                    id="screenPlayer"
+                    autoplay
+                    playsinline
+                    hidden
+                >
+                </video>
+
+                <!-- Kontrolki gościa: tylko głośność i pełny ekran -->
+                <div id="guestBar" class="guest-bar" hidden>
+                    <button type="button" id="muteBtn" class="guest-bar-btn">Wycisz</button>
+                    <input
+                        type="range"
+                        id="volumeRange"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        value="1"
+                        aria-label="Głośność"
+                    >
+                    <button type="button" id="guestFullscreenBtn" class="guest-bar-btn">Pełny ekran</button>
+                </div>
+
+            </div>
+
+            <!-- Narzędzia odtwarzacza (dla wszystkich) -->
+
+            <div class="player-tools">
+                <button type="button" id="fullscreenBtn" class="secondary-btn">
+                    Pełny ekran
+                </button>
+            </div>
+
+            <!-- Sterowanie hosta: zmiana filmu i udostępnianie ekranu -->
+
+            <div id="hostControls" class="host-controls" hidden>
+
+                <form id="setVideoForm" class="set-video-form">
+                    <input
+                        type="url"
+                        id="setVideoInput"
+                        placeholder="Wklej adres filmu (https://...mp4)"
+                        aria-label="Adres filmu"
+                    >
+                    <button type="submit" id="setVideoBtn" class="secondary-btn">
+                        Ustaw film
+                    </button>
+                </form>
+
+                <button type="button" id="shareScreenBtn" class="secondary-btn">
+                    Udostępnij ekran
+                </button>
+
+            </div>
+
+            <!-- Sterowanie gościa: odtwarzaniem steruje host -->
+
+            <div id="guestControls" class="host-controls" hidden>
+
+                <span class="guest-note">Odtwarzaniem steruje host</span>
+
+                <button type="button" id="syncBtn" class="secondary-btn">
+                    Synchronizuj
+                </button>
+
             </div>
 
             <div class="player-information">
 
                 <div class="video-details">
                     <h3 id="videoTitle">Nie wybrano materiału</h3>
-                    <p>Odtwarzanie synchroniczne</p>
+                    <p>Odtwarzanie synchroniczne <span id="roleBadge" class="role-badge"></span></p>
                 </div>
 
                 <div class="sync-indicator">

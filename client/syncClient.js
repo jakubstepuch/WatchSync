@@ -1,13 +1,22 @@
-function connectToRoom(roomCode, displayName, onMessage) {
+// mode: "create" (tworzy pokój; videoUrl opcjonalny) albo "join" (dołącza do istniejącego)
+function connectToRoom(roomCode, displayName, onMessage, options = {}) {
+    const mode = options.mode || "join";
     const protocol = location.protocol === "https:" ? "wss:" : "ws:";
     const socket = new WebSocket(`${protocol}//${location.host}`);
 
     socket.addEventListener("open", () => {
-        socket.send(JSON.stringify({
-            type: "join",
+        const payload = {
+            type: mode,
             room: roomCode,
             name: displayName
-        }));
+        };
+
+        if (mode === "create") {
+            if (options.videoUrl) payload.videoUrl = options.videoUrl;
+            if (options.roomName) payload.roomName = options.roomName;
+        }
+
+        socket.send(JSON.stringify(payload));
     });
 
     socket.addEventListener("message", (event) => {
