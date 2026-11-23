@@ -538,6 +538,23 @@ syncBtn.addEventListener("click", function() {
     sendToServer({ type: "sync_request" });
 });
 
+// Automatyczna synchronizacja uczestnika co 2 sekundy
+setInterval(function() {
+    // Synchronizujemy tylko uczestnika znajdującego się w pokoju
+    if (roomView.hidden || myUserId === null || isHost()) {
+        return;
+    }
+
+    // Film musi być załadowany
+    if (!player.currentSrc) {
+        return;
+    }
+
+    // Pobierz aktualny stan filmu z serwera
+    sendToServer({ type: "sync_request" });
+
+}, 2000);
+
 // Pasek gościa: głośność, wyciszenie i pełny ekran (brak play/pauzy, przewijania i ustawień)
 const guestBar = document.getElementById("guestBar");
 const muteBtn = document.getElementById("muteBtn");
