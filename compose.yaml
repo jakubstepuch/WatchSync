@@ -13,8 +13,8 @@ services:
       NODE_ENV: production
       PORT: "3000"
     # Domyślnie port tylko na loopback hosta: aplikacja nie jest wystawiona bezpośrednio do Internetu.
-    # W Portainerze można nadpisać zmienną WATCHSYNC_BIND (np. "10.0.0.5:3000" albo inny port hosta)
-    # bez edycji repozytorium. Docelowo dopasowane do rozpoznanego reverse proxy.
+    # W Portainerze można nadpisać zmienną WATCHSYNC_BIND (format "<adres>:<port_hosta>")
+    # bez edycji repozytorium. Rzeczywiste adresy i sieci produkcyjne nie trafiają do repo.
     ports:
       - "${WATCHSYNC_BIND:-127.0.0.1:3000}:3000"
     logging:
