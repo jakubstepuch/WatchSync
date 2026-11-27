@@ -1,0 +1,15 @@
+# do obrazu trafiają tylko package*.json, server/ i client/
+.git
+.gitignore
+.vscode
+node_modules
+npm-debug.log*
+*.log
+.env
+.env.*
+coverage
+tests
+Dockerfile
+.dockerignore
+compose.yaml
+README.md

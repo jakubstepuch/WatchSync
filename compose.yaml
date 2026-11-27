@@ -1,0 +1,24 @@
+# WatchSync: wdrożenie za istniejącym reverse proxy (HTTPS/WSS terminowane w proxy).
+# Jedna instancja: stan pokoi jest w pamięci procesu, więc nie skalować na kilka replik.
+name: watchsync
+
+services:
+  watchsync:
+    build: .
+    image: watchsync:latest
+    container_name: watchsync
+    restart: unless-stopped
+    init: true # poprawne przekazywanie SIGTERM przy docker stop / restarcie
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+    # Domyślnie port tylko na loopback hosta: aplikacja nie jest wystawiona bezpośrednio do Internetu.
+    # W Portainerze można nadpisać zmienną WATCHSYNC_BIND (np. "10.0.0.5:3000" albo inny port hosta)
+    # bez edycji repozytorium. Docelowo dopasowane do rozpoznanego reverse proxy.
+    ports:
+      - "${WATCHSYNC_BIND:-127.0.0.1:3000}:3000"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
